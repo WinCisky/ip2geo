@@ -3,6 +3,7 @@ import { oakCors } from "https://deno.land/x/cors@v1.2.2/mod.ts";
 import maxmind from "https://esm.sh/maxmind@0.6.0";
 
 const countryDbPath = "./db/GeoIP.dat";
+const cityDbPath = "./db/GeoIPCity.dat";
 const isIpv4Regex = /^(\d{1,3}\.){3}\d{1,3}$/;
 // const isIpv6Regex = /^([\da-fA-F]{1,4}:){7}[\da-fA-F]{1,4}$/;
 
@@ -15,12 +16,18 @@ router
   .get("/api/country/:ip", async (context) => {
     if (context?.params?.ip && isIpv4Regex.test(context?.params?.ip)) {
       maxmind.init(countryDbPath);
-      const location = await maxmind.getCountry(context?.params?.ip);
+      context.response.body = await maxmind.getCountry(context?.params?.ip);
+    } else {
       context.response.body = {
-        "status": "success",
-        "country-code": location?.code,
-        "country-name": location?.name,
-      };
+        "status": "error",
+      }
+    }
+  })
+  // ip 2 city ipv4
+  .get("/api/city/:ip", async (context) => {
+    if (context?.params?.ip && isIpv4Regex.test(context?.params?.ip)) {
+      maxmind.init(cityDbPath);
+      context.response.body = await maxmind.getLocation(context?.params?.ip);
     } else {
       context.response.body = {
         "status": "error",
