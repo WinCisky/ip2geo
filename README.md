@@ -1,14 +1,16 @@
 # REST API
 
-A template of REST API app using Oak framework
+Free and open source ip to geo api
 
+### :globe_with_meridians: to :it:
+
+convert an ip to its corresponding country with a **GET** request to `/api/country/{ip}` as in this [example](https://ip2geo.deno.dev/api/country/8.8.8.8).
+
+
+## Dev
 
 Start the server with the command:
 
 ```
-deno run --allow-net main.ts
+deno run --allow-net --allow-read main.ts
 ```
-
-This starts the server at http://localhost:8000/
-
-Try go to http://localhost:8000/api/Brachiosaurus or http://localhost:8000/api/

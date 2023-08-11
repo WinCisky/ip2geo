@@ -1,24 +1,29 @@
 import { Application, Router } from "https://deno.land/x/oak@v11.1.0/mod.ts";
 import { oakCors } from "https://deno.land/x/cors@v1.2.2/mod.ts";
-import data from "./data.json" assert { type: "json" };
+import maxmind from "https://esm.sh/maxmind@0.6.0";
+
+const countryDbPath = "./db/GeoIP.dat";
+const isIpv4Regex = /^(\d{1,3}\.){3}\d{1,3}$/;
+// const isIpv6Regex = /^([\da-fA-F]{1,4}:){7}[\da-fA-F]{1,4}$/;
 
 const router = new Router();
 router
   .get("/", (context) => {
-    context.response.body = "Welcome to dinosaur API!";
+    context.response.body = "Welcome to ip-2-geo API!";
   })
-  .get("/api", (context) => {
-    context.response.body = data;
-  })
-  .get("/api/:dinosaur", (context) => {
-    if (context?.params?.dinosaur) {
-      const found = data.find((item) =>
-        item.name.toLowerCase() === context.params.dinosaur.toLowerCase()
-      );
-      if (found) {
-        context.response.body = found;
-      } else {
-        context.response.body = "No dinosaurs found.";
+  // ip 2 country ipv4
+  .get("/api/country/:ip", async (context) => {
+    if (context?.params?.ip && isIpv4Regex.test(context?.params?.ip)) {
+      maxmind.init(countryDbPath);
+      const location = await maxmind.getCountry(context?.params?.ip);
+      context.response.body = {
+        "status": "success",
+        "country-code": location?.code,
+        "country-name": location?.name,
+      };
+    } else {
+      context.response.body = {
+        "status": "error",
       }
     }
   });
