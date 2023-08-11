@@ -8,7 +8,7 @@ const countryDbPath = "./db/GeoIP.dat";
 const isIpv4Regex = /^(\d{1,3}\.){3}\d{1,3}$/;
 // const isIpv6Regex = /^([\da-fA-F]{1,4}:){7}[\da-fA-F]{1,4}$/;
 
-maxmind.init([countryDbPath], {indexCache: true, memoryCache: true});
+maxmind.init([countryDbPath], {indexCache: true});
 // loading all db is too slow for deno deploy
 // maxmind.init([countryDbPath, cityDbPath, asnDbPath]);
 
