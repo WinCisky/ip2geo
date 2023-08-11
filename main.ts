@@ -4,6 +4,7 @@ import maxmind from "https://esm.sh/maxmind@0.6.0";
 
 const countryDbPath = "./db/GeoIP.dat";
 const cityDbPath = "./db/GeoIPCity.dat";
+const asnDbPath = "./db/GeoIPASNum.dat";
 const isIpv4Regex = /^(\d{1,3}\.){3}\d{1,3}$/;
 // const isIpv6Regex = /^([\da-fA-F]{1,4}:){7}[\da-fA-F]{1,4}$/;
 
@@ -15,7 +16,7 @@ router
   // ip 2 country ipv4
   .get("/api/country/:ip", async (context) => {
     if (context?.params?.ip && isIpv4Regex.test(context?.params?.ip)) {
-      maxmind.init(countryDbPath);
+      maxmind.init(countryDbPath, { indexCache: true, memoryCache : true });
       context.response.body = await maxmind.getCountry(context?.params?.ip);
     } else {
       context.response.body = {
@@ -26,8 +27,19 @@ router
   // ip 2 city ipv4
   .get("/api/city/:ip", async (context) => {
     if (context?.params?.ip && isIpv4Regex.test(context?.params?.ip)) {
-      maxmind.init(cityDbPath);
+      maxmind.init(cityDbPath, { indexCache: true, memoryCache : true });
       context.response.body = await maxmind.getLocation(context?.params?.ip);
+    } else {
+      context.response.body = {
+        "status": "error",
+      }
+    }
+  })
+  // ip 2 asn ipv4
+  .get("/api/asn/:ip", async (context) => {
+    if (context?.params?.ip && isIpv4Regex.test(context?.params?.ip)) {
+      maxmind.init(asnDbPath, { indexCache: true, memoryCache : true });
+      context.response.body = await maxmind.getAsn(context?.params?.ip);
     } else {
       context.response.body = {
         "status": "error",
