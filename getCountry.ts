@@ -1,3 +1,5 @@
+
+
 const codes = [
     "--",
     "AP","EU","AD","AE","AF","AG","AI","AL","AM","CW",
@@ -50,13 +52,9 @@ async function intToIndex(ip: number, file: Deno.FsFile) {
   let offset = 0;
 
   for (let depth = 31; depth >= 0; depth--) {
-    await Deno.seek(
-      file.rid,
-      2 * STANDARD_RECORD_LENGTH * offset,
-      Deno.SeekMode.Start,
-    );
+    await file.seek(2 * STANDARD_RECORD_LENGTH * offset, Deno.SeekMode.Start);
     const buffer = new Uint8Array(2 * MAX_RECORD_LENGTH);
-    await Deno.read(file.rid, buffer);
+    await file.read(buffer);
     record = Math.abs(ip & (1 << depth)) > 0 ? 1 : 0;
     next = 0;
     for (let j = 0; j < STANDARD_RECORD_LENGTH; j++) {
